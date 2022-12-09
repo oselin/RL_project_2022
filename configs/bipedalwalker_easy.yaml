@@ -1,0 +1,26 @@
+env_name: 'BipedalWalker-v3'
+env_parameters:
+  hardcore: false
+
+seed: 408
+exp_name: part1_env02
+run_id: ??? # decided during execution
+
+agent_name: pg_ac
+
+config_name: bipedalwalker_easy
+testing: false
+model_path: default
+
+save_video: false
+save_logging: true
+save_model: true
+use_wandb: true
+silent: false
+
+run_suffix: 0
+# ref: https://stackoverflow.com/questions/65104134/disable-file-output-of-hydra
+hydra:  
+    output_subdir: null  
+    run:  
+        dir: .

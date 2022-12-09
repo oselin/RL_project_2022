@@ -1,0 +1,60 @@
+wandb_version: 1
+
+_content:
+  desc: null
+  value:
+    env_name: BipedalWalker-v3
+    env_parameters: '{''hardcore'': False}'
+    exp_name: part1_env02
+    model_path: /m/home/home8/86/oselinp1/unix/rl_course/RL_project_2022/results/BipedalWalker-v3/model/BipedalWalker-v3_params.pt
+    run_id: '1670586182'
+    run_suffix: '0'
+    save_logging: 'True'
+    save_model: 'True'
+    save_video: 'False'
+    seed: '0'
+    silent: 'False'
+    testing: 'False'
+    use_wandb: 'True'
+_flags_cache:
+  desc: null
+  value:
+    allow_objects: null
+    convert: null
+    readonly: null
+    struct: true
+_metadata:
+  desc: null
+  value: 'ContainerMetadata(ref_type=typing.Any, object_type=<class ''dict''>, optional=True,
+    key=None, flags={''struct'': True}, flags_root=False, resolver_cache=defaultdict(<class
+    ''dict''>, {''now'': {(''%Y-%m-%d'',): ''2022-12-09'', (''%H-%M-%S'',): ''13-43-02''}}),
+    key_type=typing.Any, element_type=typing.Any)'
+_parent:
+  desc: null
+  value: null
+_wandb:
+  desc: null
+  value:
+    cli_version: 0.13.6
+    framework: torch
+    is_jupyter_run: false
+    is_kaggle_kernel: false
+    python_version: 3.8.10
+    start_time: 1670586184.969021
+    t:
+      1:
+      - 1
+      - 50
+      - 55
+      2:
+      - 1
+      - 50
+      - 55
+      3:
+      - 13
+      - 16
+      - 23
+      4: 3.8.10
+      5: 0.13.6
+      8:
+      - 5

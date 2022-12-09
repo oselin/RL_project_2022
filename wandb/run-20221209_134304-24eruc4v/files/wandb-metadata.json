@@ -1,0 +1,107 @@
+{
+    "os": "Linux-5.14.0-1054-oem-x86_64-with-glibc2.29",
+    "python": "3.8.10",
+    "heartbeatAt": "2022-12-09T11:43:05.631952",
+    "startedAt": "2022-12-09T11:43:04.918069",
+    "docker": null,
+    "cuda": null,
+    "args": [
+        "seed=0"
+    ],
+    "state": "running",
+    "program": "part1/env02/train.py",
+    "codePath": "part1/env02/train.py",
+    "git": {
+        "remote": "git@github.com:oselin/RL_project_2022.git",
+        "commit": "00fb3ca8bc60291fa01f165b7305f9746e91d503"
+    },
+    "email": "pierfrancesco.oselin@gmail.com",
+    "root": "/m/home/home8/86/oselinp1/unix/rl_course/RL_project_2022",
+    "host": "zirkoni",
+    "username": "oselinp1",
+    "executable": "/m/home/home8/86/oselinp1/unix/venv/bin/python",
+    "cpu_count": 6,
+    "cpu_count_logical": 12,
+    "cpu_freq": {
+        "current": 2817.5177500000004,
+        "min": 800.0,
+        "max": 4800.0
+    },
+    "cpu_freq_per_core": [
+        {
+            "current": 2800.0,
+            "min": 800.0,
+            "max": 4800.0
+        },
+        {
+            "current": 3010.213,
+            "min": 800.0,
+            "max": 4800.0
+        },
+        {
+            "current": 2800.0,
+            "min": 800.0,
+            "max": 4800.0
+        },
+        {
+            "current": 2800.0,
+            "min": 800.0,
+            "max": 4800.0
+        },
+        {
+            "current": 2800.0,
+            "min": 800.0,
+            "max": 4800.0
+        },
+        {
+            "current": 2800.0,
+            "min": 800.0,
+            "max": 4800.0
+        },
+        {
+            "current": 2800.0,
+            "min": 800.0,
+            "max": 4800.0
+        },
+        {
+            "current": 2800.0,
+            "min": 800.0,
+            "max": 4800.0
+        },
+        {
+            "current": 2800.0,
+            "min": 800.0,
+            "max": 4800.0
+        },
+        {
+            "current": 2800.0,
+            "min": 800.0,
+            "max": 4800.0
+        },
+        {
+            "current": 2800.0,
+            "min": 800.0,
+            "max": 4800.0
+        },
+        {
+            "current": 2800.0,
+            "min": 800.0,
+            "max": 4800.0
+        }
+    ],
+    "disk": {
+        "total": 873.2803611755371,
+        "used": 107.52431106567383
+    },
+    "gpu": "Quadro P2200",
+    "gpu_count": 1,
+    "gpu_devices": [
+        {
+            "name": "Quadro P2200",
+            "memory_total": 5281153024
+        }
+    ],
+    "memory": {
+        "total": 31.059345245361328
+    }
+}
