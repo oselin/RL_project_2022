@@ -17,7 +17,6 @@ from agents.pg_ac import PG
 from agents.ddpg import DDPG
 from common import helper as h
 from common import logger as logger
-from make_env import create_env
 
 def to_numpy(tensor):
     return tensor.cpu().numpy().flatten()
@@ -54,6 +53,10 @@ def train(agent, env, max_episode_steps=1000):
         # update observation
         obs = next_obs.copy()
 
+        if reward_sum >= 400: 
+            done = 1
+            print("Reward reached, stopping...")
+    
     # update the policy after one episode
     info = agent.update()
 
@@ -113,9 +116,8 @@ def main(cfg):
                     config=cfg)
 
     # create a env
-    #env = gym.make(cfg.env_name)
-    env = create_env(config_file_name = cfg.config_name, seed=cfg.seed)
-    #env.seed(cfg.seed)
+    env = gym.make(cfg.env_name)
+    env.seed(cfg.seed)
 
     if cfg.save_video:
         # During testing, save every episode
@@ -136,13 +138,16 @@ def main(cfg):
 
     # init agent
     if cfg.agent_name == "pg_ac":
-        agent = PG(state_shape[0], action_dim, cfg.lr, cfg.gamma)
+        agent = PG(state_shape[0], action_dim, cfg.pg_ac_lr, cfg.pg_ac_gamma)
+        trng_episodes = cfg.pg_ac_train_episodes
     else: # ddpg
         agent = DDPG(state_shape, action_dim, max_action,
-                    cfg.lr, cfg.gamma, cfg.tau, cfg.batch_size, cfg.buffer_size)
-
+                    cfg.ddpg_lr, cfg.ddpg_gamma, cfg.ddpg_tau, cfg.ddpg_batch_size, cfg.ddpg_buffer_size)
+        trng_episodes = cfg.ddpg_train_episodes
     if not cfg.testing: # training
-        for ep in range(cfg.train_episodes + 1):
+
+
+        for ep in range(trng_episodes + 1):
             # collect data and update the policy
             train_info = train(agent, env)
 
