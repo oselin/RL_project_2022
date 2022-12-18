@@ -196,10 +196,15 @@ class Policy(nn.Module):
     def __init__(self, state_dim, action_dim):
         super().__init__()
         self.actor_mean = nn.Sequential(
-            layer_init(nn.Linear(state_dim, 64)), nn.Tanh(),
-            layer_init(nn.Linear(64, 64)), nn.ReLU(),
-            layer_init(nn.Linear(64, 64)), nn.ReLU(),
-            layer_init(nn.Linear(64, action_dim), std=0.01),
+            layer_init(nn.Linear(state_dim, 256)), nn.Sigmoid(),
+            layer_init(nn.Linear(256, 512)), nn.Sigmoid(),
+            layer_init(nn.Linear(512, 512)), nn.Sigmoid(),
+            layer_init(nn.Linear(512, 512)), nn.Sigmoid(),
+            layer_init(nn.Linear(512, 512)), nn.Sigmoid(),
+            layer_init(nn.Linear(512, 512)), nn.Sigmoid(),
+            layer_init(nn.Linear(512, 256)), nn.Sigmoid(),
+            layer_init(nn.Linear(256, 256)), nn.Sigmoid(),
+            layer_init(nn.Linear(256, action_dim), std=0.01),
         )
         # TODO: Task 1: Implement actor_logstd as a learnable parameter
         # Use log of std to make sure std doesn't become negative during training
@@ -227,9 +232,12 @@ class Value(nn.Module):
     def __init__(self, state_dim):
         super().__init__()
         self.value = nn.Sequential(
-            layer_init(nn.Linear(state_dim, 64)), nn.Tanh(),
-            layer_init(nn.Linear(64, 64)), nn.Tanh(),
-            layer_init(nn.Linear(64, 1)))
+            layer_init(nn.Linear(state_dim, 256)), nn.Tanh(),
+            layer_init(nn.Linear(256, 256)), nn.Sigmoid(),
+            layer_init(nn.Linear(256, 256)), nn.Sigmoid(),
+            layer_init(nn.Linear(256, 256)), nn.Sigmoid(),
+            layer_init(nn.Linear(256, 256)), nn.Sigmoid(),
+            layer_init(nn.Linear(256, 1)))
     
     def forward(self, x):
         return self.value(x).squeeze(1) # output shape [batch,]

@@ -17,16 +17,23 @@ from agents.pg_ac import PG
 from agents.ddpg import DDPG
 from common import helper as h
 from common import logger as logger
+from make_env import create_env
+
+success_streak = 0
+reward_threshold = 0
 
 def to_numpy(tensor):
     return tensor.cpu().numpy().flatten()
 
 # Policy training function
 def train(agent, env, max_episode_steps=1000):
+    global success_streak
     # Run actual training        
     reward_sum, timesteps, done, episode_timesteps = 0, 0, False, 0
     # Reset the environment and observe the initial state
     obs = env.reset()
+
+    
     while not done:
         episode_timesteps += 1
         
@@ -53,10 +60,18 @@ def train(agent, env, max_episode_steps=1000):
         # update observation
         obs = next_obs.copy()
 
+
         if reward_sum >= 400: 
             done = 1
             print("Reward reached, stopping...")
-    
+
+    if reward_sum >= reward_threshold:
+        success_streak +=1
+        print("Minimum satisfied. Counter at", success_streak)
+    else:
+        if success_streak: print("------STREAK RESET------")
+        success_streak = 0
+        
     # update the policy after one episode
     info = agent.update()
 
@@ -97,16 +112,27 @@ def main(cfg):
     h.set_seed(cfg.seed)
     cfg.run_id = int(time.time())
 
+    # Setting the reward threshold for early stopping
+    global reward_threshold
+    if cfg.env_parameters.hardcore: 
+        reward_threshold = 200
+        print("\n\nThe environment has been set to: HARD")
+    else: 
+        reward_threshold = 250
+        print("\n\nThe environment has been set to: EASY")
+
+
     # create folders if needed
     work_dir = Path().cwd()/'part1/env02/results'/f'{cfg.env_name}'
-    if cfg.save_model: h.make_dir(work_dir/"model")
+    if cfg.save_model: h.make_dir(work_dir/"model"/f'{cfg.env_name}_params')
     if cfg.save_logging: 
         h.make_dir(work_dir/"logging")
         L = logger.Logger() # create a simple logger to record stats
 
     # Model filename
     if cfg.model_path == 'default':
-        cfg.model_path = work_dir/'model'/f'{cfg.env_name}_params.pt'
+        cfg.model_path = work_dir/'model'/f'{cfg.env_name}_params'
+
 
     # use wandb to store stats; we aren't currently logging anything into wandb during testing
     if cfg.use_wandb and not cfg.testing:
@@ -116,8 +142,9 @@ def main(cfg):
                     config=cfg)
 
     # create a env
-    env = gym.make(cfg.env_name)
-    env.seed(cfg.seed)
+    #env = gym.make(cfg.env_name,)
+    #env.seed(cfg.seed)
+    env = create_env(cfg.config_name, cfg.seed)
 
     if cfg.save_video:
         # During testing, save every episode
@@ -157,21 +184,25 @@ def main(cfg):
                 L.log(**train_info)
             if (not cfg.silent) and (ep % 100 == 0):
                 print({"ep": ep, **train_info})
+            
+            if success_streak >= 14:
+                print("That's enough")
+                break
 
         
         if cfg.save_model:
-            agent.save(cfg.model_path)
+            agent.save(cfg.model_path, cfg.seed, cfg.env_parameters.hardcore)
 
     else: # testing
         if cfg.model_path == 'default':
-            cfg.model_path = work_dir/'model'/f'{cfg.env_name}_params.pt'
-        print("Loading model from", cfg.model_path, "...")
+            cfg.model_path = work_dir/'model'/f'{cfg.env_name}_params'
+        print(" ing model from", cfg.model_path, "...")
 
         # load model
-        agent.load(cfg.model_path)
+        agent.load(cfg.model_path, cfg.seed, cfg.env_parameters.hardcore)
         
         print('Testing ...')
-        test(agent, env, num_episode=10)
+        test(agent, env, cfg.test_num_episode)
 
 
 # Entry point of the script

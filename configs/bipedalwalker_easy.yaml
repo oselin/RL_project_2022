@@ -1,6 +1,6 @@
 env_name: 'BipedalWalker-v3'
 env_parameters:
-  hardcore: false
+  hardcore: true
 
 agent_name: 
 seed: 0 # Default seed if not provided
@@ -8,21 +8,21 @@ exp_name: part1_env02
 
 
 run_id: ??? # decided during execution
-
+test_num_episode: 30
 
 #POLICY GRADIENT ACTOR CRITIC
-pg_ac_train_episodes: 2000
+pg_ac_train_episodes: 4000
 pg_ac_gamma: 0.99
-pg_ac_lr: 5e-4
-pg_ac_batch_size: 100
+pg_ac_lr: 0.5e-2
+pg_ac_batch_size: 256
 pg_ac_buffer_size: 1e6
 
 #DEEP DETERMINISTIC POLICY GRADIENT
-ddpg_train_episodes: 1500
+ddpg_train_episodes: 8000
 ddpg_gamma: 0.99
-ddpg_lr: 1e-4
+ddpg_lr: 1e-3
 ddpg_tau: 0.005
-ddpg_batch_size: 128
+ddpg_batch_size: 256
 ddpg_buffer_size: 1e6
 
 

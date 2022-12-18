@@ -224,6 +224,7 @@ class Policy(nn.Module):
         self.actor = nn.Sequential(
             nn.Linear(state_dim, 256), nn.ReLU(),
             nn.Linear(256, 256), nn.ReLU(),
+            nn.Linear(256, 256), nn.ReLU(),
             nn.Linear(256, action_dim)
         )
 
@@ -236,6 +237,7 @@ class Critic(nn.Module):
         super().__init__()
         self.value = nn.Sequential(
             nn.Linear(state_dim+action_dim, 256), nn.ReLU(),
+            nn.Linear(256, 256), nn.ReLU(),
             nn.Linear(256, 256), nn.ReLU(),
             nn.Linear(256, 1))
 
@@ -269,7 +271,7 @@ class DDPG(object):
         self.buffer_head = 0 
         self.random_transition = 5000 # collect 5k random data for better exploration
     
-
+ 
     def update(self,):
         """ After collecting one trajectory, update the pi and q for #transition times: """
         info = {}
@@ -323,7 +325,7 @@ class DDPG(object):
         if observation.ndim == 1: observation = observation[None] # add the batch dimension
         x = torch.from_numpy(observation).float().to(device)
 
-        if self.buffer_ptr < self.random_transition: # collect random trajectories for better exploration.
+        if (not evaluation and self.buffer_ptr < self.random_transition): # collect random trajectories for better exploration.
             action = torch.rand(self.action_dim)
         else:
             expl_noise = 0.1 * self.max_action # the stddev of the expl_noise if not evaluation
@@ -336,7 +338,7 @@ class DDPG(object):
             
             action = self.pi(x) #retrieve data from the policy
 
-            if not evaluation: action += expl_noise*torch.randn(action.size()).to(device)
+            if not evaluation: action += expl_noise*(torch.randn(action.size())*2-1).to(device)
 
             ########## Your code ends here. ##########
 
@@ -350,8 +352,23 @@ class DDPG(object):
 
     
     # You can implement these if needed, following the previous exercises.
-    def load(self, filepath):
-        pass
+    def load(self, filepath, seed, env_type):
+        if env_type: env_type='hard'
+        else: env_type = 'easy'
+
+        print("\n\n\Loading the files:")
+        print(f'actor_{seed}_{env_type}.pt')
+        print(f'critic_{seed}_{env_type}.pt')
+        
+        self.pi.load_state_dict(torch.load(f'{filepath}/actor_{seed}_{env_type}.pt'))
+        self.q.load_state_dict(torch.load(f'{filepath}/critic_{seed}_{env_type}.pt'))
     
-    def save(self, filepath):
-        pass
+    def save(self, filepath, seed, env_type):
+        if env_type: env_type='hard'
+        else: env_type = 'easy'
+        # Get folder name
+        folder, filename = os.path.split(os.path.abspath(filepath))
+        # Create the folder if it doesn't exist
+        
+        torch.save(self.pi.state_dict(), f'{filepath}/actor_{seed}_{env_type}.pt')
+        torch.save(self.q.state_dict(), f'{filepath}/critic_{seed}_{env_type}.pt')
