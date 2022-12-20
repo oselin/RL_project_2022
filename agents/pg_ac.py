@@ -196,15 +196,15 @@ class Policy(nn.Module):
     def __init__(self, state_dim, action_dim):
         super().__init__()
         self.actor_mean = nn.Sequential(
-            layer_init(nn.Linear(state_dim, 256)), nn.Sigmoid(),
-            layer_init(nn.Linear(256, 512)), nn.Sigmoid(),
-            layer_init(nn.Linear(512, 512)), nn.Sigmoid(),
-            layer_init(nn.Linear(512, 512)), nn.Sigmoid(),
-            layer_init(nn.Linear(512, 512)), nn.Sigmoid(),
-            layer_init(nn.Linear(512, 512)), nn.Sigmoid(),
-            layer_init(nn.Linear(512, 256)), nn.Sigmoid(),
-            layer_init(nn.Linear(256, 256)), nn.Sigmoid(),
-            layer_init(nn.Linear(256, action_dim), std=0.01),
+            #layer_init(nn.Linear(state_dim, 128)), nn.ReLU(),
+            #layer_init(nn.Linear(128, 128)), nn.ReLU(),
+            #layer_init(nn.Linear(128, 128)), nn.ReLU(),
+            #layer_init(nn.Linear(128, action_dim), std=0.01), nn.Tanh()
+
+            layer_init(nn.Linear(state_dim, 128)), nn.ReLU(),
+            layer_init(nn.Linear(128, 64)), nn.ReLU(),
+            layer_init(nn.Linear(64, action_dim), std=0.01), nn.Tanh()
+
         )
         # TODO: Task 1: Implement actor_logstd as a learnable parameter
         # Use log of std to make sure std doesn't become negative during training
@@ -232,12 +232,14 @@ class Value(nn.Module):
     def __init__(self, state_dim):
         super().__init__()
         self.value = nn.Sequential(
-            layer_init(nn.Linear(state_dim, 256)), nn.Tanh(),
-            layer_init(nn.Linear(256, 256)), nn.Sigmoid(),
-            layer_init(nn.Linear(256, 256)), nn.Sigmoid(),
-            layer_init(nn.Linear(256, 256)), nn.Sigmoid(),
-            layer_init(nn.Linear(256, 256)), nn.Sigmoid(),
-            layer_init(nn.Linear(256, 1)))
+            #layer_init(nn.Linear(state_dim, 128)), nn.Tanh(),
+            #layer_init(nn.Linear(128, 128)), nn.Tanh(),
+            #layer_init(nn.Linear(128, 128)), nn.ReLU(),
+            #layer_init(nn.Linear(128, 1)))
+
+            layer_init(nn.Linear(state_dim, 64)), nn.Tanh(),
+            layer_init(nn.Linear(64, 64)), nn.Tanh(),
+            layer_init(nn.Linear(64, 1)))
     
     def forward(self, x):
         return self.value(x).squeeze(1) # output shape [batch,]
@@ -334,8 +336,23 @@ class PG(object):
         self.next_states.append(torch.tensor(next_observation, dtype=torch.float32))
 
     # You can implement these if needed, following the previous exercises.
-    def load(self, filepath):
-        pass
+    def load(self, filepath, seed, env_type):
+        if env_type: env_type='easy'
+        else: env_type = 'hard'
+
+        print("Loading the files:")
+        print(f'pgac_actor_{seed}_{env_type}_weights.pt')
+        print(f'pgac_critic_{seed}_{env_type}_weights.pt')
+        
+        self.policy.load_state_dict(torch.load(f'{filepath}/pgac_actor_{seed}_{env_type}_weights.pt'))
+        self.value.load_state_dict(torch.load(f'{filepath}/pgac_critic_{seed}_{env_type}_weights.pt'))
     
-    def save(self, filepath):
-        pass
+    def save(self, filepath, seed, env_type):
+        if env_type: env_type='easy'
+        else: env_type = 'hard'
+        # Get folder name
+        folder, filename = os.path.split(os.path.abspath(filepath))
+        # Create the folder if it doesn't exist
+        
+        torch.save(self.policy.state_dict(), f'{filepath}/pgac_actor_{seed}_{env_type}_weights.pt')
+        torch.save(self.value.state_dict(), f'{filepath}/pgac_critic_{seed}_{env_type}_weights.pt')

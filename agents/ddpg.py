@@ -226,6 +226,10 @@ class Policy(nn.Module):
             nn.Linear(256, 256), nn.ReLU(),
             nn.Linear(256, 256), nn.ReLU(),
             nn.Linear(256, action_dim)
+        
+            #nn.Linear(state_dim, 400), nn.ReLU(),
+            #nn.Linear(400, 300), nn.ReLU(),
+            #nn.Linear(300, action_dim)
         )
 
     def forward(self, state):
@@ -239,7 +243,12 @@ class Critic(nn.Module):
             nn.Linear(state_dim+action_dim, 256), nn.ReLU(),
             nn.Linear(256, 256), nn.ReLU(),
             nn.Linear(256, 256), nn.ReLU(),
-            nn.Linear(256, 1))
+            nn.Linear(256, 1)
+    
+            #nn.Linear(state_dim+action_dim, 400), nn.ReLU(),
+            #nn.Linear(400, 300), nn.ReLU(),
+            #nn.Linear(300, 1)
+            )
 
     def forward(self, state, action):
         x = torch.cat([state, action], 1)
@@ -353,22 +362,22 @@ class DDPG(object):
     
     # You can implement these if needed, following the previous exercises.
     def load(self, filepath, seed, env_type):
-        if env_type: env_type='hard'
-        else: env_type = 'easy'
+        if env_type: env_type='easy'
+        else: env_type = 'hard'
 
-        print("\n\n\Loading the files:")
-        print(f'actor_{seed}_{env_type}.pt')
-        print(f'critic_{seed}_{env_type}.pt')
+        print("Loading the files:")
+        print(f'ddpg_actor_{seed}_{env_type}_weights.pt')
+        print(f'ddpg_critic_{seed}_{env_type}_weights.pt')
         
-        self.pi.load_state_dict(torch.load(f'{filepath}/actor_{seed}_{env_type}.pt'))
-        self.q.load_state_dict(torch.load(f'{filepath}/critic_{seed}_{env_type}.pt'))
+        self.pi.load_state_dict(torch.load(f'{filepath}/ddpg_actor_{seed}_{env_type}_weights.pt'))
+        self.q.load_state_dict(torch.load(f'{filepath}/ddpg_critic_{seed}_{env_type}_weights.pt'))
     
     def save(self, filepath, seed, env_type):
-        if env_type: env_type='hard'
-        else: env_type = 'easy'
+        if env_type: env_type='easy'
+        else: env_type = 'hard'
         # Get folder name
         folder, filename = os.path.split(os.path.abspath(filepath))
         # Create the folder if it doesn't exist
         
-        torch.save(self.pi.state_dict(), f'{filepath}/actor_{seed}_{env_type}.pt')
-        torch.save(self.q.state_dict(), f'{filepath}/critic_{seed}_{env_type}.pt')
+        torch.save(self.pi.state_dict(), f'{filepath}/ddpg_actor_{seed}_{env_type}_weights.pt')
+        torch.save(self.q.state_dict(), f'{filepath}/ddpg_critic_{seed}_{env_type}_weights.pt')

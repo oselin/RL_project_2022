@@ -5,3 +5,48 @@ env_parameters:
   enable_wind: true
   wind_power: 15
   turbulence_power: 1.5
+
+
+iseasy: false
+
+agent_name: 
+seed: 0 # Default seed if not provided
+exp_name: part1_env01
+
+
+run_id: ??? # decided during execution
+test_num_episode: 30
+
+#POLICY GRADIENT ACTOR CRITIC
+pg_ac_train_episodes: 4000
+pg_ac_gamma: 0.99
+pg_ac_lr: 0.5e-2
+pg_ac_batch_size: 256
+pg_ac_buffer_size: 1e6
+
+#DEEP DETERMINISTIC POLICY GRADIENT
+ddpg_train_episodes: 8000
+ddpg_gamma: 0.98
+ddpg_lr: 1e-3
+ddpg_tau: 0.005
+ddpg_batch_size: 256
+ddpg_buffer_size: 1e6
+
+reward_early_stopping: 100
+
+config_name: lunarlander_continuous_medium
+testing: false
+model_path: default
+
+save_video: false
+save_logging: true
+save_model: true
+use_wandb: true
+silent: false
+
+run_suffix: 0
+# ref: https://stackoverflow.com/questions/65104134/disable-file-output-of-hydra
+hydra:  
+    output_subdir: null  
+    run:  
+        dir: .
